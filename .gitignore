@@ -18,3 +18,6 @@ missfont.log
 # Editor/OS files
 .DS_Store
 .vscode/
+
+# Old per-compile snapshots; git history is the version control
+backups/

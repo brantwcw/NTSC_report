@@ -1,10 +1,9 @@
 %% // nckuee.sty 定義 // cbj
 
-% 產生論文封面
-\nckuEEtitlepage
-% 產生口試委員會簽名單
-\nckuEEoralpage
-% 產生口試委員簽名單(en)
+% 產生報告封面
+%\nckuEEtitlepage
+% 口試委員簽名單（大學部專題不需要，已移除）
+%\nckuEEoralpage
 %\nckuEEenoralpage
 
 %\newpage
@@ -51,28 +50,6 @@
 % Set the line spacing to single for the names (to compress the lines)
 \renewcommand{\baselinestretch}{1}   %行距 1 倍
 % it needs a font size changing command to be effective
-\LARGE{\zhTitle}\\  %中文題目
-\vspace{0.83cm}
-% \makebox is a text box with specified width;
-% option s: stretch
-% use \makebox to make sure
-% each text field occupies the same width
-%\makebox[1.5cm][c]{\large{學生：}}
-\hspace{0.5in}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\makebox[3.5cm][l]{\large{\authorZhName\footnote[1]{}}}\footnotetext[1]{{學生}} % 學生中文姓名
-%\hfill
-%
-%\makebox[3cm][c]{\large{指導教授：}}
-\makebox[3.5cm][r]{\large{\advisorZhNameA\footnote[2]{}}}\footnotetext[2]{{指導教授}}  %指導教授1中文姓名
-% \hspace{-3em}
-\makebox[3.5cm][r]{\large{\advisorZhNameB\footnote[2]{}}}\footnotetext[2]{{指導教授}} \\ %指導教授2中文姓名
-%
-\vspace{0.42cm}
-%
-\large{\zhUniv}\large{\zhDepartmentName}\\ %校名系所名
-\vspace{0.83cm}
-%\vfill
 \makebox[2.7cm][c]{\large{摘要}}
 \end{center}
 % Resume the line spacing to the desired setting
@@ -98,57 +75,7 @@
 %\input{frontpages/front_eabstract.tex} % // 可以引入front_eabstract.tex檔案或在此編輯 // cbj
 %\end{enAbstract}
 
-%[method 2]
-\newpage
-% create an entry in table of contents for 英文摘要
-\phantomsection % for hyperref to register this
-\addcontentsline{toc}{chapter}{\nameEabstract} % // HongJhe marked
-
-% aligned to the center of the page
-\begin{center}
-% font size:
-% \large (14pt) < \Large (18pt) < \LARGE (20pt) < \huge (24pt)< \Huge (24 pt)
-% Set the line spacing to single for the names (to compress the lines)
-\renewcommand{\baselinestretch}{1}   %行距 1 倍
-%\large % it needs a font size changing command to be effective
-%\large{\nameEabstractc}\\
-\large{\bf \enTitle}\\  %英文題目
-%\vspace{0.3cm}
-% \makebox is a text box with specified width;
-% option s: stretch
-% use \makebox to make sure
-% each text field occupies the same width
-%\makebox[2cm][s]{\large{Student: }}
-%\hspace{0.3in}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\makebox[2cm][c]{\normalsize{Author:}}
-\hspace{-0.4in}
-\makebox[5cm][c]{\normalsize{\authorEnName\footnote[1]{}}}\footnotetext[1]{{Student}}\\ % 學生英文姓名
-\makebox[2cm][c]{\normalsize{Advisor: }}
-\hspace{-0.4in}
-\makebox[5cm][c]{\normalsize{\advisorEnNameA\footnote[2]{}}}\footnotetext[2]{{Advisor}}  %教授1英文姓名
-\hspace{-0.6in}
-\makebox[5cm][c]{\normalsize{\advisorEnNameB\footnote[2]{}}}\footnotetext[2]{{Advisor}} \\ %教授2英文姓名
-%
-%\vspace{0.42cm}
-\large{\enDepartmentName}\\ %英文系所全名
-%
-\large{\enUniv}\\  %英文校名
-%\vspace{0.83cm}
-%\vfill
-%
-%\vspace{0.5cm}
-\end{center}
-
-% Resume the line spacing the desired setting
-\renewcommand{\baselinestretch}{\mybaselinestretch}   %恢復原設定
-%\large %it needs a font size changing command to be effective
-% restore the font size to normal
-\normalsize
-%%%%%%%%%%%%%
-\input{frontpages/front_eabstract.tex} % // 可以引入front_eabstract.tex檔案或在此編輯 // cbj
-
-\renewcommand{\baselinestretch}{\mybaselinestretch} 
+% 英文摘要頁（大學部專題報告不需要，已移除）
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       誌謝
@@ -216,17 +143,10 @@
 \phantomsection % for hyperref to register this
 \addcontentsline{toc}{chapter}{\nameTofc}
 \listoffigures
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%       符號說明
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Symbol list
-% define new environment, based on standard description environment
-% adapted from p.60~64, <<The LaTeX Companion>>, 1994, ISBN 0-201-54199-8
-
+% 符號說明（大學部專題報告不需要，已移除）
+% 保留環境定義以免其他地方引用報錯
 \newcommand{\SymEntryLabel}[1]%
   {\makebox[3cm][l]{#1}}
-%%
 \newenvironment{SymEntry}
    {\begin{list}{}%
        {\renewcommand{\makelabel}{\SymEntryLabel}%
@@ -235,12 +155,6 @@
         }%
    }%
    {\end{list}}
-%%%
-\newpage
-\chapter*{\nameSlist} %\makebox{} is fragile; need protect
-\phantomsection % for hyperref to register this
-\addcontentsline{toc}{chapter}{\nameSlistc}
-\input{frontpages/front_symbols.tex}
 
 \newpage
 \setcounter{page}{1}

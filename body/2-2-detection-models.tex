@@ -4,20 +4,21 @@
 
 \subsection{AASIST模型}
 
-AASIST架構是由Tak et al. (2022)所提出的，在ASVspoof21 LA挑戰中取得優異的成績。該作者在後續研究中將前端模型替換為wav2vec 2.0 XLSR並加上Rawboost Data Augmentation後被視為語音深偽偵測任務的SOTA模型。(許多後續研究以及挑戰基於此模型進行改進語比較，足見此架構之經典)
+Jung et al. 提出了 AASIST \cite{jung2021aasist} 架構，並在 ASVspoof21 LA 挑戰中取得優異的成績。該作者在後續研究 \cite{tak2022automatic} 中將前端模型替換為 wav2vec 2.0 XLSR 並加上 Rawboost Data Augmentation 後被視為語音深偽偵測任務的 SOTA 模型。(許多後續研究以及挑戰基於此模型進行改進與比較，足見此架構之經典)
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/AASIST_model.png}
     \caption{AASIST 模型架構圖}
+    \label{fig:aasist_model}
 \end{figure}
 
-該模型的運作流程如下（架構如圖X所示）：
+該模型的運作流程如下（架構如圖~\ref{fig:aasist_model}所示）：
 \begin{enumerate}
     \item \textbf{前端特徵提取}：使用預訓練的 \textbf{wav2vec 2.0} 模型對原始音波進行處理。由於 wav2vec 2.0 在大量語音數據上進行了自監督訓練，其提取的特徵具備高度的泛化能力與豐富的聲學細節。
     \item \textbf{深層編碼}：將前端輸出輸入至基於 \textbf{RawNet2} 的殘差編碼器，進一步學習深層的聲學特徵。
     \item \textbf{特徵聚合與圖建模}：透過基於自注意力的聚合層，分別提取\textbf{頻譜（Spectral）}和\textbf{時序（Temporal）}兩種維度的特徵。這兩組特徵隨後各自通過由圖注意網路（GAT）和圖池化（Graph Pooling）組成的圖模塊。
-    \item \textbf{異質圖融合}：利用圖結合技術，將頻譜與時序特徵融合為\textbf{異質譜時圖（Heterogeneous Spectro-Temporal Graph）}。隨後，特徵被送入由 **HS-GAL（Heterogeneous Stacking Graph Attention Layer）** 組成的 **MGO（Max Graph Operation）** 模塊，以捕捉跨域的偽造痕跡。
+    \item \textbf{異質圖融合}：利用圖結合技術，將頻譜與時序特徵融合為\textbf{異質譜時圖（Heterogeneous Spectro-Temporal Graph）}。隨後，特徵被送入由 \textbf{HS-GAL（Heterogeneous Stacking Graph Attention Layer）} 組成的 \textbf{MGO（Max Graph Operation）} 模塊，以捕捉跨域的偽造痕跡。
     \item \textbf{分類決策}：最後，將 MGO 產出的兩組節點堆疊並最大化，通過各節點的最大化和平均運算後串接隱藏全連接層，輸出真偽標籤。
 \end{enumerate}
 
@@ -25,11 +26,31 @@ AASIST架構是由Tak et al. (2022)所提出的，在ASVspoof21 LA挑戰中取�
 
 \subsection{MFA-Conformer (Conformer with Transfer Learning)}
 
-另一個值得關注的 SOTA 模型是 MFA-Conformer，該架構由 Zhang 等人（2022）首先應用於聲紋識別（ASV），隨後被證實同樣適用於偽造語音偵測。Conformer 區塊（Conformer Block）的設計初衷在於解決 Transformer 雖擅長捕捉長距離全域依賴（Global Context），卻在提取細微局部特徵（Local Features）上不如卷積神經網路（CNN）的問題。Conformer 透過將卷積模組（Convolution Module）嵌入 Transformer 的自注意力機制與前饋網路之間，成功結合了 CNN 的局部感知能力與 Transformer 的全域建模能力。此架構的優勢最早由 Gulati 等人（2020）\cite{gulati2020conformer} 在自動語音識別（ASR）任務中獲得證實：實驗顯示，在 LibriSpeech 基準測試上，Conformer 能以僅 Transformer 四分之一不到的參數量，達到更優異的辨識率（WER）。MFA-Conformer 在『參數效率（Parameter Efficiency）』上所展現的潛力，不僅證實了輕量化設計的可行性，更為本文後續進行跨範式（Cross-paradigm）的模型效能評比，提供了極具代表性的對照組。
+另一個值得關注的 SOTA 模型是 MFA-Conformer，Zhang et al. \cite{zhang2022mfaconformer} 首先將該架構應用於聲紋識別（ASV），隨後由 Wang et al. \cite{wang2023pretraining} 證實同樣適用於偽造語音偵測。Conformer 區塊（Conformer Block）的設計初衷在於解決 Transformer 雖擅長捕捉長距離全域依賴（Global Context），卻在提取細微局部特徵（Local Features）上不如卷積神經網路（CNN）的問題。Conformer 透過將卷積模組（Convolution Module）嵌入 Transformer 的自注意力機制與前饋網路之間，成功結合了 CNN 的局部感知能力與 Transformer 的全域建模能力。此架構的優勢最早由 Gulati et al. \cite{gulati2020conformer} 在自動語音識別（ASR）任務中獲得證實：實驗顯示，在 LibriSpeech 基準測試上，Conformer 能以僅 Transformer 四分之一不到的參數量，達到更優異的辨識率（WER）。MFA-Conformer 在『參數效率（Parameter Efficiency）』上所展現的潛力，不僅證實了輕量化設計的可行性，更為本文後續進行跨範式（Cross-paradigm）的模型效能評比，提供了極具代表性的對照組。
 
-(該說一下Conformer block的數學或是放一張Conformer block圖)
-% --- [圖片插入說明] 圖五 ---
-\begin{figure}
+如圖~\ref{fig:conformer_block}所示，單一 Conformer Block 採用了 Macaron-style 的三明治結構，依序由半步前饋網路（Half-step Feed-Forward Network, FFN）、多頭自注意力模組（Multi-Head Self-Attention, MHSA）、卷積模組（Convolution Module）以及另一個半步前饋網路組成，各模組之間以層正規化（Layer Normalization）與殘差連接（Residual Connection）串聯。其數學表達式為：
+\begin{equation}
+\tilde{x}_i = x_i + \frac{1}{2} \text{FFN}(x_i)
+\end{equation}
+\begin{equation}
+x'_i = \tilde{x}_i + \text{MHSA}(\tilde{x}_i)
+\end{equation}
+\begin{equation}
+x''_i = x'_i + \text{Conv}(x'_i)
+\end{equation}
+\begin{equation}
+y_i = \text{LayerNorm}\left(x''_i + \frac{1}{2} \text{FFN}(x''_i)\right)
+\end{equation}
+其中 $x_i$ 為第 $i$ 個 Conformer 區塊的輸入，$y_i$ 為其輸出。半步前饋網路的設計靈感源自 Macaron-Net，透過將前饋模組拆分為兩個半步並分置於注意力與卷積模組前後，有效提升了模型的表達能力。卷積模組中的深度可分離卷積（Depthwise Separable Convolution）負責捕捉局部的聲學特徵模式，與自注意力模組的全域建模能力形成互補。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/Conformer_layer.png}
+    \caption{Conformer Block 內部架構圖 \cite{gulati2020conformer}}
+    \label{fig:conformer_block}
+\end{figure}
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/MFA-Conformer_model.png}
     \caption{MFA-Conformer 模型架構圖}
@@ -37,7 +58,7 @@ AASIST架構是由Tak et al. (2022)所提出的，在ASVspoof21 LA挑戰中取�
 
 
   % \item \textbf{遷移學習 (Transfer Learning)}： (移至實驗說明)
-  % 該模型並非從頭訓練，而是利用了在 **NeMo** 工具包提供的 ASR 模型（NEMO STT En Conformer-CTC Small）上訓練的權重進行初始化。該模型是在包含數千小時英語語音的複合資料集上訓練而成。
+  % 該模型並非從頭訓練，而是利用了在 \textbf{NeMo} 工具包提供的 ASR 模型（NEMO STT En Conformer-CTC Small）上訓練的權重進行初始化。該模型是在包含數千小時英語語音的複合資料集上訓練而成。
 
 為了有效捕捉不同層級的特徵，此模型利用多尺度特徵聚合 (MFA) 與池化機制將所有 Conformer 區塊的輸出進行融合，而非僅使用最後一層。其具體運作流程與 ASP 數學定義如下：
 
@@ -76,10 +97,10 @@ H_{MFA} = \text{Concat}(\tilde{\mu}, \tilde{\sigma})
 
 隨著大規模預訓練模型在語音領域的廣泛應用，傳統的「預訓練—微調（Pre-train, Fine-tune）」範式面臨了嚴重的擴展性挑戰。在此範式下，模型首先在海量無標註數據上進行預訓練以學習通用表徵，隨後針對特定下游任務，需更新並儲存模型內部的全部或大部分參數。然而，隨著模型參數規模邁入數億級甚至更大的量級，為每個任務維護獨立的模型副本，在存儲空間與計算資源上均造成了沉重負擔。
 
-為了解決此問題，Chang 等人 (2023, 2024) 借鑑了自然語言處理 (NLP) 領域的技術，提出了一種基於提示學習（Prompting）範式的參數高效（Parameter-Efficient）\textbf{SpeechPrompt} 架構。該架構的核心在於凍結預訓練語音語言模型的參數，僅透過插入少量可學習的提示向量（Prompt Vectors），將各類語音任務統一重塑為「語音到單元生成（Speech-to-Unit Generation）」任務，從而實現高效的跨任務遷移。下節將介紹 SpeechPrompt 所基於的核心技術：生成式語音語言模型 GSLM，並在後續章節介紹SpeechPrompt的實踐方法。
+為了解決此問題，Chang et al. \cite{chang2023speechprompt} 借鑑了自然語言處理 (NLP) 領域的技術，提出了一種基於提示學習（Prompting）範式的參數高效（Parameter-Efficient）\textbf{SpeechPrompt} 架構。該架構的核心在於凍結預訓練語音語言模型的參數，僅透過插入少量可學習的提示向量（Prompt Vectors），將各類語音任務統一重塑為「語音到單元生成（Speech-to-Unit Generation）」任務，從而實現高效的跨任務遷移。下節將介紹 SpeechPrompt 所基於的核心技術：生成式語音語言模型 GSLM，並在後續章節介紹SpeechPrompt的實踐方法。
 
 \subsection{GSLM}
-傳統語音處理模型往往依賴大量標註數據，然而 Lakhotia 等人（2021）提出的 GSLM 旨在模擬人類早期的語言習得過程，僅透過原始音訊輸入即可學習聲學與語言特徵，實現無文本的自然語言處理（Textless NLP）。
+傳統語音處理模型往往依賴大量標註數據，然而 Lakhotia et al. \cite{lakhotia2021generative} 提出的 GSLM 旨在模擬人類早期的語言習得過程，僅透過原始音訊輸入即可學習聲學與語言特徵，實現無文本的自然語言處理（Textless NLP）。
 
 GSLM 的核心概念是將連續的語音波形離散化，並在此基礎上訓練語言模型。其標準流程包含三個階段：
 
@@ -105,9 +126,9 @@ GSLM 的語言模型（uLM）採用標準的 Transformer 架構，並以自回�
 
 其中 $u_{<t}$ 表示當前時刻之前的所有單元 $(u_1, ..., u_{t-1})$，$\theta$ 為模型參數。透過最小化此損失函數，模型能夠捕捉語音中長距離的依賴關係與語法結構，建立語言的機率模型。
 
-在訓練數據方面，Lakhotia 等人（2021）使用了 \textbf{LibriLight} 資料集中的 6k 小時無標註「乾淨（clean）」語音進行訓練。這證實了 GSLM 具備從大規模原始音訊中歸納高階語言知識的能力，而無需依賴任何人工轉寫的文本資源。
+在訓練數據方面，Lakhotia et al. \cite{lakhotia2021generative} 使用了 \textbf{LibriLight} 資料集中的 6k 小時無標註「乾淨（clean）」語音進行訓練。這證實了 GSLM 具備從大規模原始音訊中歸納高階語言知識的能力，而無需依賴任何人工轉寫的文本資源。
 
-GSLM 的生成品質高度依賴於前端 S2u 編碼器的特徵提取能力。Lakhotia 等人（2021）系統性地比較了 CPC、wav2vec 2.0 與 HuBERT 三種主流的自監督模型。研究發現，不同的編碼器對下游生成的影響顯著不同。其中，\textbf{HuBERT} 在語音重合成（Resynthesis）與生成（Generation）的各項客觀指標（如 Perplexity）與主觀指標（如人類聽測 MOS）上，往往能取得較佳的平衡，特別是在捕捉語音內容（Content）方面表現穩健。基於文獻中的發現，後續的相關研究（如 SpeechPrompt）傾向於選擇 HuBERT 作為默認的特徵提取器。
+GSLM 的生成品質高度依賴於前端 S2u 編碼器的特徵提取能力。Lakhotia et al. \cite{lakhotia2021generative} 系統性地比較了 CPC、wav2vec 2.0 與 HuBERT 三種主流的自監督模型。研究發現，不同的編碼器對下游生成的影響顯著不同。其中，\textbf{HuBERT} 在語音重合成（Resynthesis）與生成（Generation）的各項客觀指標（如 Perplexity）與主觀指標（如人類聽測 MOS）上，往往能取得較佳的平衡，特別是在捕捉語音內容（Content）方面表現穩健。基於文獻中的發現，後續的相關研究（如 SpeechPrompt）傾向於選擇 HuBERT 作為默認的特徵提取器。
 
 
 \subsection{SpeechPrompt 架構}
@@ -127,7 +148,7 @@ SpeechPrompt的核心概念是將預訓練的語音語言模型（如 GSLM）視
     作為系統的輸入前端，此模組負責將連續的語音波形轉換為離散單元序列（Token Sequence）。如 2.1.3 節所述，本研究考量其特徵提取的穩健性，選用預訓練的 \textbf{HuBERT} 模型提取特徵，並透過 K-means 演算法進行量化。這一步驟是將連續訊號「語言化」的關鍵。
     
     \item \textbf{Prompt Vectors (提示向量)}：
-    這是 SpeechPrompt 架構中核心的可訓練參數，負責攜帶任務特定的指令資訊。其主要包含前置於輸入層的 Input Prompts 以及嵌入於模型內部的 Deep Prompts。關於這些向量的具體數學定義、維度設定以及在 Attention 機制中的嵌入方式，我們將在 **2.2.3 節** 中進行詳細的形式化描述。
+    這是 SpeechPrompt 架構中核心的可訓練參數，負責攜帶任務特定的指令資訊。其主要包含前置於輸入層的 Input Prompts 以及嵌入於模型內部的 Deep Prompts。關於這些向量的具體數學定義、維度設定以及在 Attention 機制中的嵌入方式，我們將在 \textbf{2.2.3 節} 中進行詳細的形式化描述。
     
     \item \textbf{Frozen Unit-based Language Model (凍結的單元語言模型)}：
     此為整體架構的骨幹（Backbone），以下將簡稱為 uLM，負責理解輸入的語音單元並生成上下文表示（Contextual Representations）。文獻中已探討了多種模型架構，如 GSLM、pGSLM 與 Unit mBART。本計畫選用 GSLM 作為骨幹。在 Prompt Tuning 過程中，uLM 的所有參數保持凍結（Frozen），僅負責推論。這保證了下游任務訓練不會發生「災難性遺忘（Catastrophic Forgetting）」，並大幅降低了運算成本。
@@ -189,9 +210,9 @@ SpeechPrompt 架構根據下游任務的性質，採用不同的訓練目標。�
 \end{equation}
 在此過程中，模型透過最大化似然函數學習如何根據 Prompt 上下文生成符合目標的單元序列。
 
-Chang 等人（2023, 2024）的研究展示了 SpeechPrompt 架構的廣泛適用性。除了本計畫關注的語音分類任務外，此架構亦透過將任務轉化為序列生成問題，成功應用於自動語音辨識 (ASR)、語音翻譯 (ST) 與語音延續 (Speech Continuation) 等生成式任務，證實了 Prompting 典範作為通用語音處理框架的靈活性與潛力。
+Chang et al. \cite{chang2023speechprompt} 的研究展示了 SpeechPrompt 架構的廣泛適用性。除了本計畫關注的語音分類任務外，此架構亦透過將任務轉化為序列生成問題，成功應用於自動語音辨識 (ASR)、語音翻譯 (ST) 與語音延續 (Speech Continuation) 等生成式任務，證實了 Prompting 範式作為通用語音處理框架的靈活性與潛力。
 
-針對語音分類領域，Chang 等人（2023）在 SpeechPrompt v2 的研究中進行了廣泛評估。為了驗證此架構的潛力與適用邊界，我們引用其實驗數據（如圖三所示）進行詳細分析。
+針對語音分類領域，Chang et al. \cite{chang2023speechprompt} 在 SpeechPrompt v2 的研究中進行了廣泛評估。為了驗證此架構的潛力與適用邊界，我們引用其實驗數據（如圖三所示）進行詳細分析。
 
 \begin{figure}
     \centering
@@ -247,7 +268,7 @@ Chang 等人（2023, 2024）的研究展示了 SpeechPrompt 架構的廣泛適�
 
 \begin{itemize}
     \item \textbf{SSL AASIST}：雖然能達到極致的性能表現，但代價是必須微調整個 wav2vec 2.0 XLS-R 巨型模型（約 318M 參數）。這使得訓練成本極高，且每個新任務都需要儲存一個完整的模型副本。
-    \item \textbf{MFA-Conformer}：參考[?]的作法和實驗數據，整體參數量大幅縮減至 14M，同時保持了相當優異的偵測能力。
+    \item \textbf{MFA-Conformer}：參考\cite{wang2023pretraining}的作法和實驗數據，整體參數量大幅縮減至 14M，同時保持了相當優異的偵測能力。
     \item \textbf{SpeechPrompt}：該架構在參數效率上達到了極致。根據 Prompt Tuning 的機制，我們僅需訓練 Input Prompts 與 Deep Prompts。假設 Prompt Length 為 5，GSLM (12層, 1024維) 的可訓練參數約為：
     \[ 
     (2 \times 12 \text{ (Deep layers)} + 1 \text{ (Input layer)}) \times 5 \times 1024 + \text{Verbalizer} \approx 128,000 \approx \textbf{0.13M}
